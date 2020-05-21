@@ -5,6 +5,7 @@ const {animals} = require('./data/animals.json');
 const app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use(express.static('public'));
 const PORT = process.env.PORT || 3001
 
 function filterByQuery(query, animalsArray) {
@@ -61,16 +62,16 @@ function createNewAnimal(body, animalsArray) {
 }
 
 function validateAnimal(animal) {
-    if (!animal.name || typeof animal.name !== 'string') {
+    if (!animal.name || typeof animal.name !== String) {
         return false;
     }
-    if (!animal.species || typeof animal.species !== 'string') {
+    if (!animal.species || typeof animal.species !== String) {
         return false;
     }
-    if (animal.diet || typeof animal.diet !== 'string') {
+    if (!animal.diet || typeof animal.diet !== String) {
         return false;
     }
-    if (!animal.personalityTraits || typeof animal.personalityTraits !== 'string') {
+    if (!animal.personalityTraits || typeof animal.personalityTraits !== String) {
         return false;
     }
 
@@ -93,7 +94,7 @@ app.get('/api/animals/:id', (req, res) => {
        res.send(404);
    }
 
-})
+}); 
 
 app.post('/api/animals', (req, res) => {
     
@@ -104,6 +105,10 @@ app.post('/api/animals', (req, res) => {
         const animal = createNewAnimal(req.body, animals);
         res.json(req.body);
     }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
